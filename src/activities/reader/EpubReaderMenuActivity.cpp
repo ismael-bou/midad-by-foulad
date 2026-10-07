@@ -15,7 +15,7 @@
 #include "DictionaryStore.h"
 #include "FouladEbooksConfig.h"
 #include "MappedInputManager.h"
-#include "MidadAppSettings.h"
+#include "FouladAppSettings.h"
 #include "OpdsServerStore.h"
 #include "ReaderFontSizes.h"
 #include "ReaderPomodoro.h"
@@ -100,12 +100,12 @@ EpubReaderMenuActivity::EpubReaderMenuActivity(GfxRenderer& renderer, MappedInpu
                                                const int currentSpineIndex, const int currentPage, const int totalPages,
                                                const int bookProgressPercent, const uint8_t currentOrientation,
                                                const bool hasFootnotes, const bool hasBookmarks,
-                                               const bool isArabicBook, const bool canSyncMidad)
+                                               const bool isArabicBook, const bool canSyncFoulad)
     : Activity("EpubReaderMenu", renderer, mappedInput),
       epub(epub),
       currentSpineIndex(currentSpineIndex),
       isArabicBook(isArabicBook),
-      canSyncMidad_(canSyncMidad),
+      canSyncFoulad_(canSyncFoulad),
       sdFamilies(sdFamilyNames(isArabicBook ? arabicFontSystem.registry() : sdFontSystem.registry())),
       title(epub ? flattenedTitle(epub->getTitle()) : std::string()),
       pendingOrientation(currentOrientation),
@@ -126,19 +126,19 @@ std::vector<EpubReaderMenuActivity::MenuItem> EpubReaderMenuActivity::buildReadi
   // First, ahead of even the dictionary: cross-device sync is pressed every time
   // someone picks the book up after reading elsewhere, which is often. Shown only
   // when there is an account AND this book carries a catalog id -- the same
-  // condition launchMidadSync() needs, so the row is never present-and-inert.
+  // condition launchFouladSync() needs, so the row is never present-and-inert.
   {
     const auto& opdsServers = OPDS_STORE.getServers();
-    const bool hasMidadAccount = std::any_of(opdsServers.begin(), opdsServers.end(),
+    const bool hasFouladAccount = std::any_of(opdsServers.begin(), opdsServers.end(),
                                              [](const OpdsServer& s) { return s.url == FOULAD_EBOOKS_URL; });
     // Shown on the strength of the account alone, not on whether THIS book carries
     // a catalog id. Hiding it when the id is missing was the earlier behaviour and
     // was worse: a book that genuinely is in the library -- but was only ever opened
     // from Home, so its id was never recorded -- simply had no row, with no way to
     // tell that apart from the feature being broken. It now explains itself when
-    // pressed. canSyncMidad_ still decides which of the two it does.
-    if (hasMidadAccount) {
-      items.push_back({MenuAction::MIDAD_SYNC, StrId::STR_SYNC_MIDAD});
+    // pressed. canSyncFoulad_ still decides which of the two it does.
+    if (hasFouladAccount) {
+      items.push_back({MenuAction::FOULAD_SYNC, StrId::STR_SYNC_MIDAD});
     }
   }
   // Only offered once a dictionary is actually installed -- otherwise the row
@@ -173,7 +173,7 @@ std::vector<EpubReaderMenuActivity::MenuItem> EpubReaderMenuActivity::buildReadi
   // space is a worse cost than one extra row to scroll past. Gated on the same
   // Settings -> Apps -> Pomodoro toggle that pins the My Books tile, so a device that
   // doesn't use the feature sees no new row at all.
-  if (MIDAD_APP_SETTINGS.pomodoroEnabled) {
+  if (FOULAD_APP_SETTINGS.pomodoroEnabled) {
     items.push_back({MenuAction::POMODORO, StrId::STR_POMODORO});
   }
   return items;
@@ -194,10 +194,10 @@ std::vector<EpubReaderMenuActivity::MenuItem> EpubReaderMenuActivity::buildSetti
   items.push_back({MenuAction::RESET_BOOK_SETTINGS, StrId::STR_RESET_BOOK_SETTINGS});
   items.push_back({MenuAction::SCREENSHOT, StrId::STR_SCREENSHOT_BUTTON});
   items.push_back({MenuAction::DISPLAY_QR, StrId::STR_DISPLAY_QR});
-  // KOReader sync stays in Settings, where it has always been. Midad's moved to
+  // KOReader sync stays in Settings, where it has always been. Foulad's moved to
   // the Reading tab and pinned first (user request): it is reached constantly,
   // and a tab labelled Settings is the wrong place for something used every
-  // session. Named for where it goes either way -- repointing this row at Midad
+  // session. Named for where it goes either way -- repointing this row at Foulad
   // was rejected, since the two sync to different places and silently changing
   // what a row someone relies on does reads as data loss.
   items.push_back({MenuAction::SYNC, StrId::STR_SYNC_KOREADER});
