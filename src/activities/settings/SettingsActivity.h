@@ -135,7 +135,7 @@ struct SettingInfo {
   }
 
   // For a TOGGLE/VALUE field stored outside CrossPointSettings (e.g.
-  // MidadAppSettings) -- same reasoning as DynamicEnum above: Toggle()/Value()'s
+  // FouladAppSettings) -- same reasoning as DynamicEnum above: Toggle()/Value()'s
   // pointer-to-member only works for fields that actually live on CrossPointSettings.
   static SettingInfo DynamicToggle(StrId nameId, std::function<uint8_t()> getter, std::function<void(uint8_t)> setter,
                                    const char* key = nullptr, StrId category = StrId::STR_NONE_OPT) {
