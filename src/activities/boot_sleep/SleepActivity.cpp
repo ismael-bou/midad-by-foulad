@@ -41,8 +41,11 @@
 #include "reading/ReadingStatsStore.h"
 
 namespace {
-extern const uint8_t _binary_data_palestine_sleep_logo_136x280_png_start[];
-extern const uint8_t _binary_data_palestine_sleep_logo_136x280_png_end[];
+#ifndef SIMULATOR
+extern const uint8_t _binary_data_palestine_sleep_logo_136x280_png_start[]
+    asm("_binary_data_palestine_sleep_logo_136x280_png_start");
+extern const uint8_t _binary_data_palestine_sleep_logo_136x280_png_end[]
+    asm("_binary_data_palestine_sleep_logo_136x280_png_end");
 
 struct BuiltInSleepLogoRenderContext {
   GfxRenderer* renderer = nullptr;
@@ -89,6 +92,11 @@ bool renderBuiltInSleepLogo(const GfxRenderer& renderer, const int x, const int 
   }
   return true;
 }
+#else
+bool renderBuiltInSleepLogo(const GfxRenderer&, const int, const int) {
+  return false;
+}
+#endif
 
 // Small circular "today's reading goal" progress ring, drawn as a corner badge
 // on the Dashboard's Streak card. GfxRenderer has no arbitrary-angle arc
