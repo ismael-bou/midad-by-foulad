@@ -11,7 +11,7 @@
 // Login/Logout single-slot swap, the Browse Files/File Transfer pin-to-top,
 // and the Arabic Font insertion order. SettingsActivity.cpp is untouched and
 // does not call this -- kept deliberately separate so the touch presentation
-// stays isolated Midad-owned code with no shared dependency on (or from)
+// stays isolated Foulad-owned code with no shared dependency on (or from)
 // SettingsActivity's own internals.
 struct CategorizedSettings {
   std::vector<SettingInfo> display;
