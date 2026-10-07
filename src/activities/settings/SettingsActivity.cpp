@@ -19,7 +19,7 @@
 #include "KOReaderSettingsActivity.h"
 #include "LanguageSelectActivity.h"
 #include "MappedInputManager.h"
-#include "MidadSettingsList.h"
+#include "FouladSettingsList.h"
 #include "OpdsServerListActivity.h"
 #include "OpdsServerStore.h"
 #include "QuranBook.h"
@@ -76,11 +76,11 @@ void SettingsActivity::rebuildSettingsLists() {
                           SettingInfo::Action(StrId::STR_REMAP_FRONT_BUTTONS, SettingAction::RemapFrontButtons));
   appsSettings.push_back(SettingInfo::Action(StrId::STR_DICTIONARY, SettingAction::Dictionary));
   appsSettings.push_back(SettingInfo::Action(StrId::STR_KOREADER_SYNC, SettingAction::KOReaderSync));
-  // Midad-owned Apps rows (Quran/Games/Tasbih/Stop Watch/Pomodoro/Gym/Debug
-  // Logging) -- see src/MidadSettingsList.h. Appended here, after KOReader
+  // Foulad-owned Apps rows (Quran/Games/Tasbih/Stop Watch/Pomodoro/Gym/Debug
+  // Logging) -- see src/FouladSettingsList.h. Appended here, after KOReader
   // Sync, so Debug Logging (the last row that function adds) keeps landing
   // right after KOReader Sync, matching prior behavior.
-  appendMidadAppSettings(appsSettings);
+  appendFouladAppSettings(appsSettings);
   systemSettings.push_back(SettingInfo::Action(StrId::STR_WIFI_NETWORKS, SettingAction::Network));
   // OPDS Servers is deliberately not listed. Adding a catalog by hand means typing a
   // URL and credentials on an on-screen keyboard, and every catalog these devices
@@ -95,7 +95,7 @@ void SettingsActivity::rebuildSettingsLists() {
   systemSettings.push_back(SettingInfo::Action(StrId::STR_SD_FIRMWARE_UPDATE, SettingAction::SdFirmwareUpdate));
   systemSettings.push_back(SettingInfo::Action(StrId::STR_LANGUAGE, SettingAction::Language));
   // One slot, two states: Logout when an account is stored, Login when not.
-  // Top of Apps, not System (user request): signing in to Midad is how you reach
+  // Top of Apps, not System (user request): signing in to Foulad is how you reach
   // your library, which is a thing you *use*, not a device setting -- and buried
   // under System it was hard to find for exactly the people who had not signed in
   // yet. insert() at begin() rather than push_back so it stays above Dictionary
@@ -270,7 +270,7 @@ void SettingsActivity::toggleCurrentSetting() {
     SETTINGS.*(setting.valuePtr) = !currentValue;
   } else if (setting.type == SettingType::TOGGLE && setting.valueGetter && setting.valueSetter) {
     // Same as the valuePtr branch above, for a field stored outside
-    // CrossPointSettings (e.g. MidadAppSettings) -- see SettingInfo::DynamicToggle.
+    // CrossPointSettings (e.g. FouladAppSettings) -- see SettingInfo::DynamicToggle.
     const uint8_t currentValue = setting.valueGetter();
     setting.valueSetter(currentValue ? 0 : 1);
     if (setting.nameId == StrId::STR_QURAN && !currentValue) {
