@@ -36,7 +36,7 @@ class HomeActivity final : public Activity {
   const bool cleanInitialRefresh;
 
   // Holding Confirm anywhere on Home opens BluetoothActivity -- BLE-R2's second entry
-  // point alongside Apps' "Midad BLE" tile, both landing on the exact same screen
+  // point alongside Apps' "Foulad BLE" tile, both landing on the exact same screen
   // (see BluetoothActivity's own header comment). This is only a navigation
   // shortcut: Home itself never touches BLE directly, only BluetoothActivity's
   // onEnter()/onExit() do. Confirmed free/unused on this screen before adding (grep
