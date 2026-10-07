@@ -5,7 +5,7 @@
 #include "ArabicFontSystem.h"
 #include "CrossPointSettings.h"
 #include "FouladEbooksConfig.h"
-#include "MidadSettingsList.h"
+#include "FouladSettingsList.h"
 #include "OpdsServerStore.h"
 #include "SdCardFontSystem.h"
 
@@ -40,10 +40,10 @@ CategorizedSettings buildCategorizedSettings() {
                       SettingInfo::Action(StrId::STR_REMAP_FRONT_BUTTONS, SettingAction::RemapFrontButtons));
   out.apps.push_back(SettingInfo::Action(StrId::STR_DICTIONARY, SettingAction::Dictionary));
   out.apps.push_back(SettingInfo::Action(StrId::STR_KOREADER_SYNC, SettingAction::KOReaderSync));
-  // Midad-owned Apps rows (Quran/Games/Tasbih/Stop Watch/Pomodoro/Gym/Debug
+  // Foulad-owned Apps rows (Quran/Games/Tasbih/Stop Watch/Pomodoro/Gym/Debug
   // Logging) -- appended here, after KOReader Sync, so Debug Logging (the last
   // row that function adds) keeps landing right after KOReader Sync.
-  appendMidadAppSettings(out.apps);
+  appendFouladAppSettings(out.apps);
   out.system.push_back(SettingInfo::Action(StrId::STR_WIFI_NETWORKS, SettingAction::Network));
   // OPDS Servers is deliberately not listed -- see the original comment history
   // in SettingsActivity.cpp. The activity itself stays (ActivityManager still
