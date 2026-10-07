@@ -265,7 +265,7 @@ void FouladSyncActivity::render(RenderLock&&) {
   const int lineHeight = renderer.getLineHeight(UI_10_FONT_ID);
   const int textWidth = pageWidth - metrics.contentSidePadding * 2;
 
-  GUI.drawHeader(renderer, Rect{0, metrics.topPadding, pageWidth, metrics.headerHeight}, tr(STR_SYNC_MIDAD));
+  GUI.drawHeader(renderer, Rect{0, metrics.topPadding, pageWidth, metrics.headerHeight}, tr(STR_SYNC_FOULAD));
 
   const int top = (pageHeight - lineHeight) / 2;
 
