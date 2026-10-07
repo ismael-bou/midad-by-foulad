@@ -1,0 +1,73 @@
+name: Build Develop Firmware
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: write
+
+jobs:
+  build-develop:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pio_env: gh_release
+            asset: firmware.bin
+          - pio_env: sticky-gh_release
+            asset: firmware-sticky.bin
+          - pio_env: x4pro-gh_release
+            asset: firmware-x4pro.bin
+          - pio_env: papermono-gh_release
+            asset: firmware-papermono.bin
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.14'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: "0.12.5"
+          checksum: "68a509da24b06b4223a1c0175fb5eb5bc79342b76cbeff0cfe51ac3f5b17b6b2"
+          enable-cache: false
+
+      - name: Install PlatformIO Core and Python dependencies
+        run: uv pip install --system --require-hashes -r scripts/requirements-ci.lock
+
+      - name: Cache PlatformIO packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.platformio
+          key: pio-${{ runner.os }}-${{ hashFiles('platformio.ini') }}
+          restore-keys: pio-${{ runner.os }}-
+
+      - name: Verify PlatformIO package integrity
+        run: python3 scripts/verify_platformio_packages.py
+
+      - name: Build firmware
+        run: pio run -e ${{ matrix.pio_env }} -j1
+
+      - name: Name firmware asset
+        run: |
+          if [ "${{ matrix.asset }}" != "firmware.bin" ]; then
+            cp ".pio/build/${{ matrix.pio_env }}/firmware.bin"               ".pio/build/${{ matrix.pio_env }}/${{ matrix.asset }}"
+          fi
+
+      - name: Publish develop firmware release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3
+        with:
+          tag_name: develop-latest
+          name: Foulad Develop - Latest
+          prerelease: true
+          make_latest: false
+          overwrite_files: true
+          files: .pio/build/${{ matrix.pio_env }}/${{ matrix.asset }}
