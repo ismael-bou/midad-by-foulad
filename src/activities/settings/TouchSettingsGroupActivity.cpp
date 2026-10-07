@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "MappedInputManager.h"
-#include "MidadTouchSettingsSupport.h"
+#include "FouladTouchSettingsSupport.h"
 #include "SettingsActionDispatch.h"
 #include "activities/util/FrontlightPanelActivity.h"
 #include "activities/util/IntervalSelectionActivity.h"
