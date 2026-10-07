@@ -41,7 +41,7 @@
 #include "GymPlanStore.h"
 #include "KOReaderCredentialStore.h"
 #include "MappedInputManager.h"
-#include "MidadAppSettings.h"
+#include "FouladAppSettings.h"
 #include "OpdsServerStore.h"
 #include "OtaRollbackDetection.h"
 #include "OtaRollbackRecoveryPlan.h"
@@ -607,7 +607,7 @@ void setupDisplayAndFonts(bool seamless = false, bool uiOnlyFonts = false) {
   // Self-heal the extracted Quran (and its default-font sidecar) at boot for
   // devices where the toggle is already on -- covers SD swaps, torn writes,
   // and firmware upgrades that changed the embedded copy or sidecar format.
-  if (MIDAD_APP_SETTINGS.quranEnabled) {
+  if (FOULAD_APP_SETTINGS.quranEnabled) {
     QuranBook::ensureExtracted();
   }
 
@@ -712,7 +712,7 @@ void setup() {
   HalSystem::checkPanic();
 
   SETTINGS.loadFromFile();
-  MIDAD_APP_SETTINGS.loadFromFile();
+  FOULAD_APP_SETTINGS.loadFromFile();
   APP_STATE.loadFromFile();
   RECENT_BOOKS.loadFromFile();
   GAME_SCORES.loadFromFile();
@@ -988,7 +988,7 @@ void loop() {
   }
 
 #ifndef SIMULATOR
-  // Midad BLE peripheral (phone control -- see docs/ble-module-tasks.md's device state
+  // Foulad BLE peripheral (phone control -- see docs/ble-module-tasks.md's device state
   // machine): only ever runs while BluetoothActivity is on screen (isUserRequested(),
   // set by that activity's onEnter()/onExit() -- BLE-R2 correction 2 moved this off a
   // persisted "keep BLE running in the background" setting; NimBLE's ~57-58KB resident
