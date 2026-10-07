@@ -323,7 +323,7 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
     // renderer's panel-push points -- see GfxRenderer::setDarkMode.
     v.push_back(SettingInfo::Toggle(StrId::STR_DARK_MODE, &CrossPointSettings::darkModeEnabled, "darkModeEnabled",
                                     StrId::STR_CAT_DISPLAY));
-    // NOTE: no STR_UI_THEME entry -- Midad is single-theme firmware
+    // NOTE: no STR_UI_THEME entry -- Foulad is single-theme firmware
     // (CrossPointSettings::uiTheme is fixed at FOULAD, see its declaration).
     // CrossPoint's multi-theme picker (Classic/Lyra/Lyra Extended/RoundedRaff)
     // does not apply; RoundedRaffTheme was removed entirely (Group I).
@@ -408,10 +408,10 @@ inline std::vector<SettingInfo> getSettingsList(const SdCardFontRegistry* regist
                                     "backShortToFileBrowser", StrId::STR_CAT_CONTROLS));
 
     // --- Apps ---
-    // Quran/Games/Tasbih/Stop Watch/Pomodoro/Gym/Midad BLE/Debug Logging live
-    // on MidadAppSettings, not CrossPointSettings, and their SettingInfo rows
-    // are defined in src/MidadSettingsList.h/.cpp instead of here -- see
-    // SettingsActivity::rebuildSettingsLists()'s appendMidadAppSettings() call
+    // Quran/Games/Tasbih/Stop Watch/Pomodoro/Gym/Foulad BLE/Debug Logging live
+    // on FouladAppSettings, not CrossPointSettings, and their SettingInfo rows
+    // are defined in src/FouladSettingsList.h/.cpp instead of here -- see
+    // SettingsActivity::rebuildSettingsLists()'s appendFouladAppSettings() call
     // and docs/upstream-sync-architecture.md's Phase B for why keeping them
     // out of this upstream-owned file matters.
     //
