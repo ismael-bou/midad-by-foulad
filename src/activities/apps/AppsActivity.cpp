@@ -10,7 +10,7 @@
 
 #include "AppsGridLayout.h"
 #include "MappedInputManager.h"
-#include "MidadAppSettings.h"
+#include "FouladAppSettings.h"
 #include "QuranBook.h"
 #include "SilentRestart.h"
 #include "activities/ActivityManager.h"
@@ -51,23 +51,23 @@ const std::vector<AppsActivity::AppEntry>& AppsActivity::entries() {
   // app that cannot simply be switched on.
   // Setter lambdas save immediately (same convention as SettingInfo::DynamicToggle
   // in SettingsList.h) so this table is the one place that knows each app's flag
-  // lives on MidadAppSettings, not the caller.
+  // lives on FouladAppSettings, not the caller.
   static const std::vector<AppEntry> kEntries = {
       {AppId::Files, StrId::STR_FILES, FolderIcon, nullptr, nullptr},
-      {AppId::Quran, StrId::STR_QURAN, QuranIcon, [] { return MIDAD_APP_SETTINGS.quranEnabled; },
+      {AppId::Quran, StrId::STR_QURAN, QuranIcon, [] { return FOULAD_APP_SETTINGS.quranEnabled; },
        [](uint8_t v) {
-         MIDAD_APP_SETTINGS.quranEnabled = v;
-         MIDAD_APP_SETTINGS.saveToFile();
+         FOULAD_APP_SETTINGS.quranEnabled = v;
+         FOULAD_APP_SETTINGS.saveToFile();
        }},
-      {AppId::Games, StrId::STR_GAMES, GamesIcon, [] { return MIDAD_APP_SETTINGS.gamesEnabled; },
+      {AppId::Games, StrId::STR_GAMES, GamesIcon, [] { return FOULAD_APP_SETTINGS.gamesEnabled; },
        [](uint8_t v) {
-         MIDAD_APP_SETTINGS.gamesEnabled = v;
-         MIDAD_APP_SETTINGS.saveToFile();
+         FOULAD_APP_SETTINGS.gamesEnabled = v;
+         FOULAD_APP_SETTINGS.saveToFile();
        }},
-      {AppId::Tasbih, StrId::STR_TASBIH, TasbihIcon, [] { return MIDAD_APP_SETTINGS.tasbihEnabled; },
+      {AppId::Tasbih, StrId::STR_TASBIH, TasbihIcon, [] { return FOULAD_APP_SETTINGS.tasbihEnabled; },
        [](uint8_t v) {
-         MIDAD_APP_SETTINGS.tasbihEnabled = v;
-         MIDAD_APP_SETTINGS.saveToFile();
+         FOULAD_APP_SETTINGS.tasbihEnabled = v;
+         FOULAD_APP_SETTINGS.saveToFile();
        }},
       // News is deliberately absent: the server removed /opds/news (foulad-ebooks
       // PR #113, live 2026-08-05) after News-as-EPUB kept producing on-device parse
@@ -75,27 +75,27 @@ const std::vector<AppsActivity::AppEntry>& AppsActivity::entries() {
       // article cards). A tile here would only ever reach a permanent 404. The
       // launch plumbing (AppId::News, goToNews) stays for a possible future
       // device-facing endpoint, but nothing routes to it.
-      {AppId::Stopwatch, StrId::STR_STOPWATCH, StopwatchIcon, [] { return MIDAD_APP_SETTINGS.stopwatchEnabled; },
+      {AppId::Stopwatch, StrId::STR_STOPWATCH, StopwatchIcon, [] { return FOULAD_APP_SETTINGS.stopwatchEnabled; },
        [](uint8_t v) {
-         MIDAD_APP_SETTINGS.stopwatchEnabled = v;
-         MIDAD_APP_SETTINGS.saveToFile();
+         FOULAD_APP_SETTINGS.stopwatchEnabled = v;
+         FOULAD_APP_SETTINGS.saveToFile();
        }},
-      {AppId::Pomodoro, StrId::STR_POMODORO, PomodoroIcon, [] { return MIDAD_APP_SETTINGS.pomodoroEnabled; },
+      {AppId::Pomodoro, StrId::STR_POMODORO, PomodoroIcon, [] { return FOULAD_APP_SETTINGS.pomodoroEnabled; },
        [](uint8_t v) {
-         MIDAD_APP_SETTINGS.pomodoroEnabled = v;
-         MIDAD_APP_SETTINGS.saveToFile();
+         FOULAD_APP_SETTINGS.pomodoroEnabled = v;
+         FOULAD_APP_SETTINGS.saveToFile();
        }},
-      {AppId::Gym, StrId::STR_GYM, GymIcon, [] { return MIDAD_APP_SETTINGS.gymEnabled; },
+      {AppId::Gym, StrId::STR_GYM, GymIcon, [] { return FOULAD_APP_SETTINGS.gymEnabled; },
        [](uint8_t v) {
-         MIDAD_APP_SETTINGS.gymEnabled = v;
-         MIDAD_APP_SETTINGS.saveToFile();
+         FOULAD_APP_SETTINGS.gymEnabled = v;
+         FOULAD_APP_SETTINGS.saveToFile();
        }},
       // A launcher like any other app entry below (BLE-R2) -- opens BluetoothActivity,
       // which now owns BLE's entire lifetime itself (correction 2: screen-scoped, no
       // persisted on/off setting left to back a getEnabled/setEnabled pair). Entering
       // the screen starts BLE; leaving it stops BLE. Nothing to auto-enable on first
       // tap the way a normal app's opt-in does.
-      {AppId::MidadBle, StrId::STR_MIDAD_BLE, MidadBleIcon, nullptr, nullptr},
+      {AppId::FouladBle, StrId::STR_MIDAD_BLE, FouladBleIcon, nullptr, nullptr},
   };
   return kEntries;
 }
@@ -162,7 +162,7 @@ bool AppsActivity::launch(const AppEntry& entry) {
     case AppId::Gym:
       startActivityForResult(std::make_unique<GymActivity>(renderer, mappedInput), [](const ActivityResult&) {});
       return true;
-    case AppId::MidadBle:
+    case AppId::FouladBle:
       // Opens the pairing screen -- BLE-R2 correction 2. Does not itself touch BLE;
       // BluetoothActivity's own onEnter()/onExit() request/release the radio
       // directly now (see BlePeripheralManager::setUserRequested()). Deliberately
