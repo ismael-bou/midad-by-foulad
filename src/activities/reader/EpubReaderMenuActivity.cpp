@@ -138,7 +138,7 @@ std::vector<EpubReaderMenuActivity::MenuItem> EpubReaderMenuActivity::buildReadi
     // tell that apart from the feature being broken. It now explains itself when
     // pressed. canSyncFoulad_ still decides which of the two it does.
     if (hasFouladAccount) {
-      items.push_back({MenuAction::FOULAD_SYNC, StrId::STR_SYNC_MIDAD});
+      items.push_back({MenuAction::FOULAD_SYNC, StrId::STR_SYNC_FOULAD});
     }
   }
   // Only offered once a dictionary is actually installed -- otherwise the row
