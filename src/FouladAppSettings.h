@@ -24,6 +24,7 @@ class FouladAppSettings : public PersistableStore<FouladAppSettings> {
 
  public:
   static const char* getFilePath() { return "/.crosspoint/foulad_apps.json"; }
+  static const char* getLegacyFilePath() { return "/.crosspoint/midad_apps.json"; }
   void toJson(JsonDocument& doc) const;
   bool fromJson(JsonVariantConst doc);
 
