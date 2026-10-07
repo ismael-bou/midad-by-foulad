@@ -58,7 +58,9 @@ bool FouladAppSettings::loadFromFile() {
   // see FouladAppSettingsLoadPlan.h.
   const bool ownFileExists = Storage.exists(getFilePath());
   const bool ownFileLoadedOk = ownFileExists && PersistableStore<FouladAppSettings>::loadFromFile();
-  const bool legacyFileExists = Storage.exists(CrossPointSettings::getFilePath());
+  const bool legacyOwnFileExists = Storage.exists(getLegacyFilePath());
+  const bool legacySettingsFileExists = Storage.exists(CrossPointSettings::getFilePath());
+  const bool legacyFileExists = legacyOwnFileExists || legacySettingsFileExists;
 
   switch (planFouladAppSettingsLoad(ownFileExists, ownFileLoadedOk, legacyFileExists)) {
     case FouladAppSettingsLoadPlan::UseOwnFile:
@@ -82,7 +84,8 @@ bool FouladAppSettings::loadFromFile() {
       // user's toggle/pomodoro/gym choices survive the split, then write our
       // own file so this branch is never taken again.
       JsonDocument legacyDoc;
-      if (!readDocFromFile(CrossPointSettings::getFilePath(), legacyDoc)) {
+      const char* migrationSource = legacyOwnFileExists ? getLegacyFilePath() : CrossPointSettings::getFilePath();
+      if (!readDocFromFile(migrationSource, legacyDoc)) {
         // legacyFileExists was true a moment ago but the read failed anyway
         // (e.g. corrupt legacy file) -- fall back to defaults rather than
         // migrating from an empty document.
