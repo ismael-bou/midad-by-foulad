@@ -95,7 +95,7 @@ const std::vector<AppsActivity::AppEntry>& AppsActivity::entries() {
       // persisted on/off setting left to back a getEnabled/setEnabled pair). Entering
       // the screen starts BLE; leaving it stops BLE. Nothing to auto-enable on first
       // tap the way a normal app's opt-in does.
-      {AppId::FouladBle, StrId::STR_MIDAD_BLE, FouladBleIcon, nullptr, nullptr},
+      {AppId::FouladBle, StrId::STR_FOULAD_BLUETOOTH, FouladBleIcon, nullptr, nullptr},
   };
   return kEntries;
 }
