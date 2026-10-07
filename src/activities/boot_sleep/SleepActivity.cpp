@@ -36,11 +36,60 @@
 #include "components/UITheme.h"
 #include "components/icons/cover.h"
 #include "fontIds.h"
-#include "images/MidadLogo120.h"
+#include "images/Logo120.h"
 #include "images/MoonIcon.h"
 #include "reading/ReadingStatsStore.h"
 
 namespace {
+extern const uint8_t _binary_data_palestine_sleep_logo_136x280_png_start[];
+extern const uint8_t _binary_data_palestine_sleep_logo_136x280_png_end[];
+
+struct BuiltInSleepLogoRenderContext {
+  GfxRenderer* renderer = nullptr;
+  PNG* decoder = nullptr;
+  int x = 0;
+  int y = 0;
+};
+
+int renderBuiltInSleepLogo(PNGDRAW* draw) {
+  auto* context = static_cast<BuiltInSleepLogoRenderContext*>(draw->pUser);
+  if (context == nullptr || context->renderer == nullptr || context->decoder == nullptr) return 0;
+
+  uint16_t pixels[136];
+  context->decoder->getLineAsRGB565(draw, pixels, PNG_RGB565_LITTLE_ENDIAN, 0xFFFF);
+  for (int x = 0; x < draw->iWidth; ++x) {
+    if (pixels[x] < 0x8000) {
+      context->renderer->drawPixel(context->x + x, context->y + draw->y, true);
+    }
+  }
+  return 1;
+}
+
+bool renderBuiltInSleepLogo(const GfxRenderer& renderer, const int x, const int y) {
+  const auto size = static_cast<int>(_binary_data_palestine_sleep_logo_136x280_png_end -
+                                     _binary_data_palestine_sleep_logo_136x280_png_start);
+  PNG png;
+  if (png.openFLASH(const_cast<uint8_t*>(_binary_data_palestine_sleep_logo_136x280_png_start), size,
+                    renderBuiltInSleepLogo) != PNG_SUCCESS) {
+    LOG_ERR("SLP", "Failed to open built-in sleep logo PNG");
+    return false;
+  }
+
+  BuiltInSleepLogoRenderContext context;
+  context.renderer = const_cast<GfxRenderer*>(&renderer);
+  context.decoder = &png;
+  context.x = x;
+  context.y = y;
+
+  const int result = png.decode(&context, 0);
+  png.close();
+  if (result != PNG_SUCCESS) {
+    LOG_ERR("SLP", "Failed to decode built-in sleep logo PNG: %d", result);
+    return false;
+  }
+  return true;
+}
+
 // Small circular "today's reading goal" progress ring, drawn as a corner badge
 // on the Dashboard's Streak card. GfxRenderer has no arbitrary-angle arc
 // primitive (drawArc/fillArc are quadrant-only, for rounded-rect corners), so
@@ -690,10 +739,17 @@ void SleepActivity::renderDefaultSleepScreen() const {
   const auto pageWidth = renderer.getScreenWidth();
   const auto pageHeight = renderer.getScreenHeight();
 
+  constexpr int LOGO_WIDTH = 136;
+  constexpr int LOGO_HEIGHT = 280;
+  const int logoX = (pageWidth - LOGO_WIDTH) / 2;
+  const int logoY = (pageHeight - LOGO_HEIGHT) / 2;
+
   renderer.clearScreen();
-  renderer.drawImage(MidadLogo120, (pageWidth - 120) / 2, (pageHeight - 120) / 2, 120, 120);
-  renderer.drawCenteredText(UI_10_FONT_ID, pageHeight / 2 + 70, tr(STR_BRAND_MIDAD), true, EpdFontFamily::BOLD);
-  renderer.drawCenteredText(SMALL_FONT_ID, pageHeight / 2 + 95, tr(STR_SLEEPING));
+  if (!renderBuiltInSleepLogo(renderer, logoX, logoY)) {
+    renderer.drawImage(Logo120, (pageWidth - 120) / 2, (pageHeight - 120) / 2, 120, 120);
+  }
+  renderer.drawCenteredText(UI_10_FONT_ID, logoY + LOGO_HEIGHT + 20, tr(STR_BRAND_FOULAD), true, EpdFontFamily::BOLD);
+  renderer.drawCenteredText(SMALL_FONT_ID, logoY + LOGO_HEIGHT + 45, tr(STR_SLEEPING));
 
   // Make sleep screen dark unless light is selected in settings
   if (SETTINGS.sleepScreen != CrossPointSettings::SLEEP_SCREEN_MODE::LIGHT) {
