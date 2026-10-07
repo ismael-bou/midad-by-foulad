@@ -305,7 +305,7 @@ void HomeActivity::loop() {
   // the navigation stack, so Back from BluetoothActivity finds it empty and
   // ActivityManager's existing pop-fallback (see loop()) recreates Home fresh --
   // i.e. this shortcut always returns to Home, which is the desired behavior for
-  // a Home-launched shortcut. The Apps -> Midad BLE tile is deliberately NOT
+  // a Home-launched shortcut. The Apps -> Foulad BLE tile is deliberately NOT
   // changed to match: that path already clears the gate reliably as-is (Apps
   // itself has nothing comparable to Home's cover buffer retained), and
   // push/pop there correctly returns to Apps, not Home.
