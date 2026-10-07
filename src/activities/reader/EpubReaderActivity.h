@@ -171,8 +171,8 @@ class EpubReaderActivity final : public ReaderActivity {
   void openReaderMenu();
   void openDictionaryWordSelect();
   bool launchKOReaderSync();
-  // Midad equivalent: same save-release-replace shape, see the implementation.
-  void launchMidadSync();
+  // Foulad equivalent: same save-release-replace shape, see the implementation.
+  void launchFouladSync();
   // True when this book carries a Foulad eBooks catalog id, i.e. Sync can do
   // something. Gates the drawer row so it is never shown-and-inert.
   bool bookHasFouladId() const;
