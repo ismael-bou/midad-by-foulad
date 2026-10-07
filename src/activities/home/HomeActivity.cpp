@@ -347,7 +347,9 @@ void HomeActivity::loop() {
         onSettingsOpen();
         break;
       case HomeMenuItem::APPS:
-        activityManager.goToApps();
+        // HomeMenuItem::APPS is retained for compatibility with existing navigation
+        // state, but the Home tile is now the direct Files/library entry point.
+        activityManager.goToFileBrowser();
         break;
       case HomeMenuItem::STATS:
         onStatsOpen();
@@ -490,7 +492,8 @@ void HomeActivity::render(RenderLock&&) {
                           recentBooks, selectorIndex, coverRendered, coverBufferStored, bufferRestored,
                           std::bind(&HomeActivity::storeCoverBuffer, this));
 
-  // Order: eBooks, Stats, Files, Settings -- matches menuItemToIndex/indexToMenuItem.
+  // Order: eBooks, Stats, Files, Settings -- the Files entry is intentionally direct
+  // because it is the device's personal-library and book-transfer entry point.
   // Short labels chosen to fit the bottom icon bar tiles. Recent Books has no
   // menu entry anymore: the recents covers row (and its stacked +N tile, which
   // opens the full grid) took over that job.
@@ -504,7 +507,7 @@ void HomeActivity::render(RenderLock&&) {
   // themselves were the reason: every one of them was off by default and, once
   // enabled, appeared inside My Books, so nobody could find them. Files is reached
   // constantly but is one press deeper rather than invisible, which is the trade.
-  std::vector<const char*> menuItems = {tr(STR_EBOOKS), tr(STR_STATS), tr(STR_CAT_APPS), tr(STR_SETTINGS_TITLE)};
+  std::vector<const char*> menuItems = {tr(STR_EBOOKS), tr(STR_STATS), tr(STR_FILES), tr(STR_SETTINGS_TITLE)};
   std::vector<UIIcon> menuIcons = {Library, Stats, Apps, Settings};
 
   if (metrics.homeContinueReadingInMenu && !recentBooks.empty()) {
