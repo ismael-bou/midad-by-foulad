@@ -54,16 +54,16 @@ class HomeActivity final : public Activity {
   // lockNextConfirmRelease.
   bool lockNextBackRelease = false;
 
-  // Convert HomeMenuItem to menu index (used in onEnter). Order matches render()'s
-  // menuItems construction: eBooks, Stats, Files, Settings ("Continue Reading" isn't
-  // a HomeMenuItem -- it's a prepended label tied to the recentBooks selection range,
-  // handled separately in loop()). Every slot is one fixed destination; the pair that
-  // used to swap on Foulad eBooks login state no longer does.
+  // Convert HomeMenuItem to menu index (used in onEnter). Order matches render():
+  // eBooks, Stats, Files, Transfer, Apps, Settings. Continue Reading is the
+  // recent-book selection area rather than a HomeMenuItem.
   static int menuItemToIndex(HomeMenuItem item) {
     int i = 0;
     if (item == HomeMenuItem::FOULAD_EBOOKS) return i;
     ++i;
     if (item == HomeMenuItem::STATS) return i;
+    ++i;
+    if (item == HomeMenuItem::FILE_TRANSFER) return i;
     ++i;
     if (item == HomeMenuItem::APPS) return i;
     ++i;
@@ -76,6 +76,7 @@ class HomeActivity final : public Activity {
     int i = 0;
     if (idx == i++) return HomeMenuItem::FOULAD_EBOOKS;
     if (idx == i++) return HomeMenuItem::STATS;
+    if (idx == i++) return HomeMenuItem::FILE_TRANSFER;
     if (idx == i++) return HomeMenuItem::APPS;
     if (idx == i) return HomeMenuItem::SETTINGS_MENU;
     return HomeMenuItem::NONE;
