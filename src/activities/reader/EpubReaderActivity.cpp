@@ -47,7 +47,7 @@
 #include "ReaderUtils.h"
 #include "RecentBooksStore.h"
 #include "SdCardFontSystem.h"
-#include "activities/reader/MidadSyncActivity.h"
+#include "activities/reader/FouladSyncActivity.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
 #include "util/BookReaderSettings.h"
@@ -421,7 +421,7 @@ void EpubReaderActivity::onExit() {
     }
   }
 
-  // KOReader/MidadReader Sync: queue this session's position the same way the
+  // KOReader/FouladReader Sync: queue this session's position the same way the
   // manual "Sync" menu item uploads it (see launchKOReaderSync()), so a device
   // that's read but never pressed Sync still shows up server-side eventually.
   // Queued rather than sent live for the same reason as the Foulad reading-
@@ -1277,8 +1277,8 @@ void EpubReaderActivity::onReaderMenuConfirm(EpubReaderMenuActivity::MenuAction 
       launchKOReaderSync();
       break;
     }
-    case EpubReaderMenuActivity::MenuAction::MIDAD_SYNC: {
-      launchMidadSync();
+    case EpubReaderMenuActivity::MenuAction::FOULAD_SYNC: {
+      launchFouladSync();
       break;
     }
     case EpubReaderMenuActivity::MenuAction::BOOKMARKS: {
@@ -1332,7 +1332,7 @@ std::string EpubReaderActivity::currentBookFouladId() const {
 
 bool EpubReaderActivity::bookHasFouladId() const {
   // The Sync row is offered only for a book the catalog can be told about.
-  // launchMidadSync() requires the same id and returns silently without one, so
+  // launchFouladSync() requires the same id and returns silently without one, so
   // gating the row on anything weaker (an account existing, say) produces a menu
   // entry that does nothing at all when pressed -- which is exactly what shipped
   // in v1.8.5-rc and was reported as "nothing happens".
@@ -1342,7 +1342,7 @@ bool EpubReaderActivity::bookHasFouladId() const {
   return !currentBookFouladId().empty();
 }
 
-void EpubReaderActivity::launchMidadSync() {
+void EpubReaderActivity::launchFouladSync() {
   if (!epub) return;
 
   // Empty id is not an early return any more: the sync screen says why. The id is
@@ -1366,7 +1366,7 @@ void EpubReaderActivity::launchMidadSync() {
   // Persist first: the reader is replaced below and resumes from this file, so a
   // failed write would silently lose the reader's place. Same guard as KOReader's.
   if (!saveProgress(currentSpineIndex, currentPage, totalPages)) {
-    LOG_ERR("SYNC", "Aborting Midad sync because current progress could not be saved");
+    LOG_ERR("SYNC", "Aborting Foulad sync because current progress could not be saved");
     pendingSyncSaveError = true;
     requestUpdate();
     return;
@@ -1375,7 +1375,7 @@ void EpubReaderActivity::launchMidadSync() {
   // Release Epub and Section (~65KB) before the handshake, exactly as the KOReader
   // path does. A TLS session cannot be afforded alongside a loaded book, and this is
   // the whole reason sync is a separate activity rather than a call from here.
-  LOG_DBG("SYNC", "Releasing epub for Midad sync (heap before: %u)", (unsigned)ESP.getFreeHeap());
+  LOG_DBG("SYNC", "Releasing epub for Foulad sync (heap before: %u)", (unsigned)ESP.getFreeHeap());
   {
     RenderLock lock(*this);
     if (section) {
@@ -1390,7 +1390,7 @@ void EpubReaderActivity::launchMidadSync() {
   }
   LOG_DBG("SYNC", "Epub released (heap after: %u)", (unsigned)ESP.getFreeHeap());
 
-  activityManager.replaceActivity(std::make_unique<MidadSyncActivity>(renderer, mappedInput, savedEpubPath, bookId,
+  activityManager.replaceActivity(std::make_unique<FouladSyncActivity>(renderer, mappedInput, savedEpubPath, bookId,
                                                                       savedTitle, savedAuthor, percent, currentPage,
                                                                       totalPages, ageSeconds));
 }
@@ -2359,7 +2359,7 @@ void EpubReaderActivity::renderContents(std::unique_ptr<Page> page, const int or
   // would use a HALF refresh for its first page. Keep that same clean base for
   // image pages: their double-FAST path otherwise runs directly over the
   // retained frame after a silent restart (for example, when returning from
-  // KOReader/Midad sync), leaving the old UI mixed with the image.
+  // KOReader/Foulad sync), leaving the old UI mixed with the image.
   const bool cleanImageBasePending = manualRefreshPending || pagesUntilFullRefresh <= 1;
   const bool needsTextGrayscale = SETTINGS.textAntiAliasing;
   const bool needsAnyGrayscale = needsTextGrayscale || pageHasImages;
